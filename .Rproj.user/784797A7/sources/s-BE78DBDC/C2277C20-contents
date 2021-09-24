@@ -1,0 +1,208 @@
+
+# ----- Package Installation -----
+
+# ----- Local Installation -----
+pkg_zip_dir <- "your/directory/here/PeptideRanger.zip"
+install.packages(pkg_zip_dir, repos = NULL, type = "source")
+
+
+
+# ----- Dev Tools Installation -----
+
+
+
+
+
+### ----- General Prioritization Workflow Vignettes -----
+
+library(PeptideRanger)
+library(dplyr)
+
+target_proteins <- sample(unique(PeptideRanger::SwissProt2018_peptidome$uniprot), 100)
+
+
+# ----- Minimal Use -----
+
+## Prioritize peptides for a target list of proteins by RF detectability predictions using package data
+
+# Selects top peptides for target protein list based on priorities
+peptide_list <- PeptideRanger::prioritize_peptides(uniprot_list = target_proteins,
+                                                   max_n = 5,
+                                                   peptidome = PeptideRanger::SwissProt2018_peptidome,
+                                                   prediction_model = PeptideRanger::RFmodel_ProteomicsDB,
+                                                   priorities = "RF_score",
+                                                   priority_thresholds = 0)
+
+
+
+# ----- Novel Proteome ----
+
+## Prioritize peptides for synthesis from a novel proteome for a target list of proteins by RF detectability predictions
+
+# Generates a peptidome of unique peptides from a proteome fasta file
+novel_peptidome <- PeptideRanger::create_peptidome(proteome_dir = "H:/projects/IsodopingAlgorithm/PeptideRanger_dev/data_toAdd/uniprot_homo_20180803_swissprot_isoforms.fasta",
+                                                   missed_cleavages = c(0,2),
+                                                   synth_peps = TRUE,
+                                                   aa_range = c(6,25))
+
+peptide_list <- PeptideRanger::prioritize_peptides(uniprot_list = target_proteins,
+                                                   max_n = 5,
+                                                   peptidome = novel_peptidome,
+                                                   prediction_model = PeptideRanger::RFmodel_ProteomicsDB,
+                                                   priorities = "RF_score",
+                                                   priority_thresholds = 0)
+
+
+
+# ----- Novel Database and Multiple Priorities -----
+
+## Train a RF model on a novel database and prioritize peptides for a target list of proteins by multiple priorities
+
+# Priorities include;
+# - If peptides are present in an available library of tested synthetic peptides
+# - If peptides appear in the novel database at a frequency of 80% or more
+# - Score by RF detectability predictions
+
+synthetic_library <- sample_n(PeptideRanger::SwissProt2018_peptidome_synth[PeptideRanger::SwissProt2018_peptidome_synth$uniprot %in% target_proteins,], 200)
+
+
+CPTAC_peptidome <- PeptideRanger::peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome_synth,
+                                                       pep_reference = PeptideRanger::CPTAC_exp_counts,
+                                                       reference_name = "CPTAC",
+                                                       exp_counts_col = "n_obs_pep",
+                                                       detection_freq = TRUE,
+                                                       detection_ratio = TRUE)
+
+CPTAC_peptidome <- PeptideRanger::peptides_inReference(peptidome = CPTAC_peptidome,
+                                                       pep_reference = synthetic_library,
+                                                       reference_name = "synth_library")
+
+CPTAC_RFmodel <- PeptideRanger::train_RFmodel(peptidome = CPTAC_peptidome,
+                                              reference_name = "CPTAC")
+
+peptide_list <- PeptideRanger::prioritize_peptides(uniprot_list = target_proteins,
+                                                   max_n = 5,
+                                                   peptidome = CPTAC_peptidome,
+                                                   prediction_model = CPTAC_RFmodel,
+                                                   priorities = c("synth_library", "CPTAC_freq", "RF_score"),
+                                                   priority_thresholds = c(TRUE, 0.8, 0))
+
+
+
+
+
+### ----- Function Specific Vignettes -----
+
+
+
+# ----- Peptidome Generator -----
+
+# minimal use, default params
+peptidome <- PeptideRanger::create_peptidome(proteome_dir = "data_toAdd/uniprot_homo_20180803_swissprot.fasta")
+
+# specify MCs/pep size range
+peptidome <- PeptideRanger::create_peptidome(proteome_dir = "data_toAdd/uniprot_homo_20180803_swissprot.fasta",
+                                             missed_cleavages = 0,
+                                             aa_range = c(7,25) )
+
+# filter out synth incompatible (Q/E N-term, P C-term)
+peptidome <- PeptideRanger::create_peptidome(proteome_dir = "data_toAdd/uniprot_homo_20180803_swissprot.fasta",
+                                             missed_cleavages = c(0,2),
+                                             synth_peps = TRUE,
+                                             aa_range = c(6,20))
+
+
+
+# ----- Peptide Predictor -----
+
+peps_ofInterest <- sample_n(PeptideRanger::SwissProt2018_peptidome, 100)
+
+# prediction for a single peptide
+PeptideRanger::peptide_predictions(peptides = "PEPTIDERANGER",
+                                   prediction_model = PeptideRanger::RFmodel_ProteomicsDB)
+
+# list of peptides, no missed cleavage info
+predictions <- PeptideRanger::peptide_predictions(peptides = peps_ofInterest$sequence,
+                                                  prediction_model = PeptideRanger::RFmodel_ProteomicsDB)
+
+# list of peptides with missed cleavage info
+predictions <- PeptideRanger::peptide_predictions(peptides = peps_ofInterest$sequence,
+                                                  prediction_model = PeptideRanger::RFmodel_ProteomicsDB,
+                                                  missed_cleavages = peps_ofInterest$missed_cleavages)
+
+
+
+# ----- Peptide Reference Merger ------
+
+
+# Minimal use/sequence flagging
+peptidome <- PeptideRanger::peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome_synth,
+                                                 pep_reference = synthetic_library,
+                                                 reference_name = "synth_library")
+
+
+# Flag TM peptides
+peptidome <- PeptideRanger::peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome,
+                                                 pep_reference = PeptideRanger::tm_peptides,
+                                                 reference_name = "transmembrane")
+
+
+# Prep for model training
+ProtDB_peptidome <- PeptideRanger::peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome,
+                                                        pep_reference = PeptideRanger::ProtDB_exp_counts,
+                                                        reference_name = "ProtDB",
+                                                        exp_counts_col = "n_obs_pep",
+                                                        detection_ratio = TRUE)
+
+
+# Prep for prioritization
+CPTAC_peptidome <- PeptideRanger::peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome_synth,
+                                                       pep_reference = PeptideRanger::CPTAC_exp_counts,
+                                                       reference_name = "CPTAC",
+                                                       exp_counts_col = "n_obs_pep",
+                                                       detection_freq = TRUE)
+
+
+
+# ----- RF Trainer -----
+
+CPTAC_peptidome <- PeptideRanger::peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome_synth,
+                                                       pep_reference = PeptideRanger::CPTAC_exp_counts,
+                                                       reference_name = "CPTAC",
+                                                       exp_counts_col = "n_obs_pep",
+                                                       detection_ratio = TRUE)
+
+custom_trainingSet <- dplyr::sample_n(CPTAC_peptidome, 5000)
+
+
+# minimal use
+CPTAC_RFmodel <- PeptideRanger::train_RFmodel(peptidome = ProtDB_peptidome,
+                                              reference_name = "CPTAC")
+
+# custom training set - train on all peptides in peptidome
+CPTAC_RFmodel <- PeptideRanger::train_RFmodel(peptidome = custom_trainingSet,
+                                              reference_name = "CPTAC",
+                                              total_trainingSet = TRUE)
+
+
+
+
+
+# ----- Prioritizer -----
+
+target_proteins <- sample(unique(PeptideRanger::SwissProt2018_peptidome$uniprot), 100)
+
+# minimal use
+prioritized_peptides <- PeptideRanger::prioritize_peptides(uniprot_list = target_proteins,
+                                                           max_n = 5,
+                                                           peptidome = PeptideRanger::SwissProt2018_peptidome,
+                                                           prediction_model = PeptideRanger::RFmodel_ProteomicsDB,
+                                                           priorities = "RF_score",
+                                                           priority_thresholds = 0)
+
+# m
+
+
+
+
+
