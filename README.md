@@ -249,15 +249,20 @@ synthetic_library <- dplyr::sample_n(PeptideRanger::SwissProt2018_peptidome_synt
 
 <br>
 
-The `peptides_inReference()` function is then used to merge the peptide experiment counts in CPTAC with the peptides in the peptidome. If a peptide in the peptidome is not observed in CPTAC, it is assigned an observation value of 0. 
+First, the `peptides_inReference()` function is used to merge peptide experiment counts in CPTAC with peptides in the peptidome. Second, it is used again to flag peptides from the synthetic library as `TRUE` in the peptidome.  
 
+<br>
+
+`peptides_inReference()` Details:
 * The column of peptides in the `pep_reference` dataframe must be labelled "sequence"
-* `exp_counts_col`  must be set to the name of the column containing the number of observations or experiment counts in the database.
+* `exp_counts_col` must be set to the name of the column containing the number of observations or experiment counts in the database.
 * `detection_freq = TRUE`: the frequency of appearance of each peptide will be calculated (n of experiments observed/total n database experiments).
 * `detection_ratio = TRUE`: the detectability ratio of each peptide will be calculated (n of experiments observed/n of experiments parent protein observed).
-* `reference_name` will be used as a  prefix label for all columns added to the peptidome by this function. 
+* `reference_name` will be used as a prefix label for all columns added to the peptidome by this function. 
 
-
+<br>
+**Merge CPTAC Counts with Peptidome**
+If a peptide in the peptidome is not observed in CPTAC, it is assigned an observation value of 0. 
 ```r
 CPTAC_peptidome <- peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome_synth,
                                         pep_reference = PeptideRanger::CPTAC_exp_counts,
@@ -268,10 +273,8 @@ CPTAC_peptidome <- peptides_inReference(peptidome = PeptideRanger::SwissProt2018
 ```
 
 <br>
-
-Next, all peptides in the peptidome that are also found in the library of synthetic peptides will be flagged. Given that no `exp_counts_col` is specified, peptides will be labelled `TRUE` in the `synthetic_library` column if they are present in it, and `FALSE` if they are not. 
-
-
+**Flag Peptides in Synthetic Library**
+Given that no `exp_counts_col` is specified, peptides will be labelled `TRUE` in the `synthetic_library` column if they are present in it, and `FALSE` if they are not. 
 ```r
 CPTAC_peptidome <- peptides_inReference(peptidome = CPTAC_peptidome,
                                         pep_reference = synthetic_library,
