@@ -261,8 +261,11 @@ First, the `peptides_inReference()` function is used to merge peptide experiment
 * `reference_name` will be used as a prefix label for all columns added to the peptidome by this function. 
 
 <br>
+
 **Merge CPTAC Counts with Peptidome**
+
 If a peptide in the peptidome is not observed in CPTAC, it is assigned an observation value of 0. 
+
 ```r
 CPTAC_peptidome <- peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome_synth,
                                         pep_reference = PeptideRanger::CPTAC_exp_counts,
@@ -273,8 +276,11 @@ CPTAC_peptidome <- peptides_inReference(peptidome = PeptideRanger::SwissProt2018
 ```
 
 <br>
+
 **Flag Peptides in Synthetic Library**
+
 Given that no `exp_counts_col` is specified, peptides will be labelled `TRUE` in the `synthetic_library` column if they are present in it, and `FALSE` if they are not. 
+
 ```r
 CPTAC_peptidome <- peptides_inReference(peptidome = CPTAC_peptidome,
                                         pep_reference = synthetic_library,
