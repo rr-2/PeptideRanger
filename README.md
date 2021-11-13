@@ -22,7 +22,7 @@ The `PeptideRanger` package contains a random forest (RF) classifier that predic
 
 Functions available in the `PeptideRanger` package:
 
-* `create_peptidome()`: Creates a list of all unique tryptic peptides for a given proteome in fasta file format.
+* `create_peptidome()`: Creates a dataframe of all unique tryptic peptides for a given proteome fasta file.
 
 * `peptides_inReference()`: Adds peptide observation information from a reference/database to a peptidome.
 
