@@ -118,7 +118,7 @@ For these examples, a random sample of 100 protein UniProt IDs will be used to r
 
 ```r
 set.seed("3284")
-target_proteins <- sample(unique(PeptideRanger::SwissProt2018_peptidome$uniprot), 100)
+target_proteins <- sample(unique(SwissProt2018_peptidome$uniprot), 100)
 ```
 
 <br>
@@ -134,8 +134,8 @@ In this example, the top 5 peptides for each of the target proteins are selected
 ```r
 prioritized_peptides <- prioritize_peptides(uniprot_list = target_proteins,
                                             max_n = 5,
-                                            peptidome = PeptideRanger::SwissProt2018_peptidome,
-                                            prediction_model = PeptideRanger::RFmodel_ProteomicsDB,
+                                            peptidome = SwissProt2018_peptidome,
+                                            prediction_model = RFmodel_ProteomicsDB,
                                             priorities = "RF_score",
                                             priority_thresholds = 0)
 ```
@@ -206,7 +206,7 @@ This peptidome can then be used directly as input to the `peptidome` parameter o
 prioritized_peptides <- prioritize_peptides(uniprot_list = target_proteins,
                                             max_n = 10,
                                             peptidome = novel_peptidome,
-                                            prediction_model = PeptideRanger::RFmodel_ProteomicsDB,
+                                            prediction_model = RFmodel_ProteomicsDB,
                                             priorities = "RF_score",
                                             priority_thresholds = 0)
 ```
@@ -244,7 +244,7 @@ The example library of synthetic peptides will include 200 peptides randomly sel
 
 
 ```r
-synthetic_library <- dplyr::sample_n(PeptideRanger::SwissProt2018_peptidome_synth[PeptideRanger::SwissProt2018_peptidome_synth$uniprot %in% target_proteins,], 200)
+synthetic_library <- dplyr::sample_n(SwissProt2018_peptidome_synth[SwissProt2018_peptidome_synth$uniprot %in% target_proteins,], 200)
 ```
 
 <br>
@@ -267,8 +267,8 @@ First, the `peptides_inReference()` function is used to merge peptide experiment
 If a peptide in the peptidome is not observed in CPTAC, it is assigned an observation value of 0. 
 
 ```r
-CPTAC_peptidome <- peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome_synth,
-                                        pep_reference = PeptideRanger::CPTAC_exp_counts,
+CPTAC_peptidome <- peptides_inReference(peptidome = SwissProt2018_peptidome_synth,
+                                        pep_reference = CPTAC_exp_counts,
                                         reference_name = "CPTAC",
                                         exp_counts_col = "n_obs_pep",
                                         detection_freq = TRUE,
@@ -370,7 +370,7 @@ The `peptide_predictions()` function scores peptide detectability using the inpu
 
 ```r
 set.seed(7169)
-peps_ofInterest <- dplyr::sample_n(PeptideRanger::SwissProt2018_peptidome, 10)
+peps_ofInterest <- dplyr::sample_n(SwissProt2018_peptidome, 10)
 ```
 
 <br>
@@ -381,7 +381,7 @@ peps_ofInterest <- dplyr::sample_n(PeptideRanger::SwissProt2018_peptidome, 10)
 
 ```r
 peptide_predictions(peptides = "PEPTIDERANGER",
-                    prediction_model = PeptideRanger::RFmodel_ProteomicsDB)
+                    prediction_model = RFmodel_ProteomicsDB)
 ```
 
 ```
@@ -398,7 +398,7 @@ Missed cleavages are used a feature for the RF predictor. If they are not availa
 
 ```r
 predictions <- peptide_predictions(peptides = peps_ofInterest$sequence,
-                                   prediction_model = PeptideRanger::RFmodel_ProteomicsDB)
+                                   prediction_model = RFmodel_ProteomicsDB)
 ```
 
 <br>
@@ -428,7 +428,7 @@ If missed cleavages are available, they can be input as a list to the `missed_cl
 
 ```r
 predictions <- peptide_predictions(peptides = peps_ofInterest$sequence,
-                                   prediction_model = PeptideRanger::RFmodel_ProteomicsDB,
+                                   prediction_model = RFmodel_ProteomicsDB,
                                    missed_cleavages = peps_ofInterest$missed_cleavages)
 ```
 
@@ -538,18 +538,18 @@ The `peptides_inReference()` function adds information from a database or datase
 
 ##### Ex.1: Flag Transmembrane Peptides
 
-The `peptides_inReference()` function can be used to flag peptides if they are present in a list. For example, `PeptideRanger::tm_peptides` dataframe contains a list of peptides that overlap with transmembrane domains annotated in UniProt. The column of peptides in the `pep_reference` dataframe must be labelled `sequence`.  
+The `peptides_inReference()` function can be used to flag peptides if they are present in a list. For example, `tm_peptides` dataframe contains a list of peptides that overlap with transmembrane domains annotated in UniProt. The column of peptides in the `pep_reference` dataframe must be labelled `sequence`.  
 
 
 ```r
-peptidome <- peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome,
-                                  pep_reference = PeptideRanger::tm_peptides,
+peptidome <- peptides_inReference(peptidome = SwissProt2018_peptidome,
+                                  pep_reference = tm_peptides,
                                   reference_name = "transmembrane")
 ```
 
 <br>
 
-Peptides in the peptidome that are present in `PeptideRanger::tm_peptides` are labelled `TRUE` in the `transmembrane` column. 
+Peptides in the peptidome that are present in `tm_peptides` are labelled `TRUE` in the `transmembrane` column. 
 
 
 ```
@@ -575,8 +575,8 @@ The RF in `PeptideRanger` is trained to predict peptide detectability ratios (n 
 
 
 ```r
-ProtDB_peptidome <- peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome,
-                                         pep_reference = PeptideRanger::ProtDB_exp_counts,
+ProtDB_peptidome <- peptides_inReference(peptidome = SwissProt2018_peptidome,
+                                         pep_reference = ProtDB_exp_counts,
                                          reference_name = "ProtDB",
                                          exp_counts_col = "n_obs_pep",
                                          detection_ratio = TRUE)
@@ -605,8 +605,8 @@ If `detection_freq = TRUE` and `exp_counts_col` is specified, then the function 
 
 
 ```r
-CPTAC_peptidome <- peptides_inReference(peptidome = PeptideRanger::SwissProt2018_peptidome_synth,
-                                        pep_reference = PeptideRanger::CPTAC_exp_counts,
+CPTAC_peptidome <- peptides_inReference(peptidome = SwissProt2018_peptidome_synth,
+                                        pep_reference = CPTAC_exp_counts,
                                         reference_name = "CPTAC",
                                         exp_counts_col = "n_obs_pep",
                                         detection_freq = TRUE)
