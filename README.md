@@ -47,7 +47,7 @@ Data available in the `PeptideRanger` package:
 
 * `CPTAC_exp_counts`: Dataframe of all peptides found in a 2021/02/18 download of the CPTAC database and the number of experiments they were observed in (column = `n_obs_pep`)
 
-* `ProtDB_exp_counts`: Dataframe of all peptides found in a 2020/12 download of the ProteomicsDB database and the number of experiments they were observed in (column = `n_obs_pep`)
+* `ProtDB_exp_counts`: Dataframe of all peptides found in a 2020/11/27 download of the ProteomicsDB database and the number of experiments they were observed in (column = `n_obs_pep`)
 
 * `RFmodel_CPTAC`: Random forest classifier trained on the CPTAC database to predict peptide detectability.
 
@@ -57,7 +57,7 @@ Data available in the `PeptideRanger` package:
 
 * `SwissProt2018_peptidome_synth`: Filtered version of `SwissProt2018_peptidome` that does not include peptides that are challening to synthesize. This currently excludes peptides with N-term Q and E residues and with C-term P residues.
 
-* `tm_peptides`: List of peptides that overlap with transmembrane domain sequences annotated in UniProt. 
+* `tm_peptides`: List of peptides that overlap with transmembrane domain sequence annotations downloaded from SwissProt-UniProt on 2021/01/14. 
 
 <br>
 
