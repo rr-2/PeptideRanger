@@ -1,0 +1,18 @@
+#' Uniprot/Swiss-Prot Peptidome
+#'
+#' List of all unique peptides (peptidome) yielded from an in-silico tryptic digestion of a 2018/08/03 download of the human proteome from Uniprot/Swiss-Prot. This digest includes peptides yielded from 0-2 missed cleavage (MC) events and in an amino acid range of 6-25 residues.
+#'
+#' @format A data frame with 1952204 rows and 7 variables:
+#' \describe{
+#'   \item{symbol}{gene symbol of parent protein}
+#'   \item{uniprot}{uniprot ID of parent protein}
+#'   \item{missed_cleavages}{number of MCs that peptide resulted from}
+#'   \item{sequence}{amino acid sequence of peptide}
+#'   \item{start}{parent protein position of first residue in peptide}
+#'   \item{end}{parent protein position of last residue in peptide}
+#'   \item{size}{number of amino acid residues in peptide}
+
+#'
+#' }
+#'
+"SwissProt2018_peptidome"

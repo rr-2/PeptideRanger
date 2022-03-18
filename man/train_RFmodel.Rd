@@ -19,3 +19,16 @@ RF model for predicting peptide detectability
 \description{
 Trains a random forest model using a peptidome with reference information
 }
+\examples{
+\dontrun{
+CPTAC_peptidome <- peptides_inReference(peptidome = SwissProt2018_peptidome,
+                                        reference_name = "CPTAC",
+                                        pep_reference = CPTAC_exp_counts,
+                                        exp_counts_col = "n_obs_pep",
+                                        detection_ratio = TRUE)
+
+train_RFmodel(peptidome = CPTAC_peptidome,
+              reference_name = "CPTAC")
+}
+
+}

@@ -27,8 +27,25 @@ peptides_inReference(
 \item{detection_ratio}{If TRUE, calculates ratio of peptide observations to parent protein observations}
 }
 \value{
-Dataframe of peptidome with reference information
+dataframe of peptidome with reference information
 }
 \description{
 Matches peptide reference information with peptidome sequences
+}
+\examples{
+\dontrun{
+
+peptides_inReference(peptidome = SwissProt2018_peptidome,
+                     pep_reference = tm_peptides,
+                     reference_name = "transmembrane")
+
+peptides_inReference(peptidome = SwissProt2018_peptidome,
+                     pep_reference = CPTAC_exp_counts,
+                     reference_name = "CPTAC",
+                     exp_counts_col = "n_obs_pep",
+                     detection_freq = TRUE,
+                     detection_ratio = TRUE)
+}
+
+
 }

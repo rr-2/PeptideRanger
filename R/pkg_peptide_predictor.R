@@ -4,12 +4,26 @@
 #' @param prediction_model RF model for used for detectability predictions.
 #' @param missed_cleavages list of peptide missed cleavages in same order as peptides. If missing, missed cleavages will be calculated from peptide sequence for model predictions.
 #' @return dataframe of RF detectability scores with peptide sequences.
+#'
+#' @examples
+#' \dontrun{
+#' peptide_predictions(peptides = c("PEPTIDERANGER", "LLYQPILR", "DAASLFGNK"),
+#'                     prediction_model = RFmodel_ProteomicsDB)
+#'
+#' peptide_predictions(peptides = "MLAILKAQILLR",
+#'                     prediction_model = RFmodel_CPTAC,
+#'                     missed_cleavages = 2)
+#'}
+#'
 #' @export
+
+
+
 
 peptide_predictions <- function(peptides, prediction_model, missed_cleavages){
 
 
-
+  RF_score <- NULL
 
   # ----- Missed Cleavages -----
 

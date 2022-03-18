@@ -32,3 +32,27 @@ list of n prioritized peptides for proteins of interest
 \description{
 Selects the top n peptides for a list of protein uniprot IDs given a set of priorities
 }
+\examples{
+\dontrun{
+prioritize_peptides(uniprot_list = c("Q9NQ94", "P04217", "A8K2U0"),
+                    peptidome = SwissProt2018_peptidome,
+                    prediction_model = CPTAC_RFmodel,
+                    priorities = "RF_score",
+                    priority_thresholds = 0)
+
+
+CPTAC_peptidome <- peptides_inReference(peptidome = SwissProt2018_peptidome,
+                                        reference_name = "CPTAC",
+                                        pep_reference = CPTAC_exp_counts,
+                                        exp_counts_col = "n_obs_pep",
+                                        detection_freq = TRUE)
+
+prioritize_peptides(uniprot_list = c("Q3T906", "P04217", "A8K2U0"),
+                    max_n = 10, peptidome = CPTAC_peptidome,
+                    prediction_model = RFmodel_CPTAC,
+                    priorities = c("CPTAC_freq","RF_score"),
+                    priority_thresholds = c(0.8, 0))
+}
+
+
+}

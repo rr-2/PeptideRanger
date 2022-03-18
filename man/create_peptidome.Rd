@@ -21,3 +21,12 @@ Peptidome of unique peptides with parent protein uniprot IDs, sequence locations
 \description{
 Generates a tryptic peptidome of unique peptides using a provided proteome. Requires bioconductor pacakge "cleaver".
 }
+\examples{
+\dontrun{
+create_peptidome(proteome_dir = "./proteome.fasta",
+                 missed_cleavages = c(0,2),
+                 synth_peps = FALSE,
+                 aa_range = c(7-25))
+}
+
+}

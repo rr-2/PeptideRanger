@@ -7,9 +7,33 @@
 #' @param priorities list of priority column names in peptidome
 #' @param priority_thresholds list of minimum values that priorities must reach to be considered
 #' @return list of n prioritized peptides for proteins of interest
-#' @import randomForest
-#' @import dplyr
+#' @importFrom dplyr select arrange filter desc
+#' @importFrom stats na.omit
 #' @import Peptides
+#'
+#' @examples
+#' \dontrun{
+#' prioritize_peptides(uniprot_list = c("Q9NQ94", "P04217", "A8K2U0"),
+#'                     peptidome = SwissProt2018_peptidome,
+#'                     prediction_model = CPTAC_RFmodel,
+#'                     priorities = "RF_score",
+#'                     priority_thresholds = 0)
+#'
+#'
+#' CPTAC_peptidome <- peptides_inReference(peptidome = SwissProt2018_peptidome,
+#'                                         reference_name = "CPTAC",
+#'                                         pep_reference = CPTAC_exp_counts,
+#'                                         exp_counts_col = "n_obs_pep",
+#'                                         detection_freq = TRUE)
+#'
+#' prioritize_peptides(uniprot_list = c("Q3T906", "P04217", "A8K2U0"),
+#'                     max_n = 10, peptidome = CPTAC_peptidome,
+#'                     prediction_model = RFmodel_CPTAC,
+#'                     priorities = c("CPTAC_freq","RF_score"),
+#'                     priority_thresholds = c(0.8, 0))
+#'}
+#'
+#'
 #' @export
 
 
@@ -25,10 +49,13 @@ prioritize_peptides <- function(uniprot_list, max_n, peptidome, prediction_model
 
   # ----- Errors and Defaults -----
 
+  missed_cleavages <- uniprot <- NULL
+
+
   if(missing(peptidome)){
 
     # default peptidome if none specified
-    peptidome <- peptidome_SwissProt2018
+    peptidome <- PeptideRanger::SwissProt2018_peptidome
 
     print('default peptidome: 2018 SwissProt Trypsin digest, 0-2 MCs, 6-25aa, unique to 1 protein')
   }
@@ -146,7 +173,7 @@ prioritize_peptides <- function(uniprot_list, max_n, peptidome, prediction_model
         # filters for peptides from curr_peps that have value >= threshold in numeric curr_priority column
         priority_peps <- dplyr::filter(curr_peps, curr_peps[[curr_priority]] >= curr_threshold)
         # arranges peptides in descending order by value in the curr_priority column
-        priority_peps <- dplyr::arrange(priority_peps, desc(priority_peps[[curr_priority]]))
+        priority_peps <- dplyr::arrange(priority_peps, dplyr::desc(priority_peps[[curr_priority]]))
 
         # adds peptides in the top max_n rows (minus nrow peptides_toAdd) in the ordered list
         peps_toAdd <- BiocGenerics::rbind(peps_toAdd, priority_peps[1:(max_n-nrow(peps_toAdd)),])

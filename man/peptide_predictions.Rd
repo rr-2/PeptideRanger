@@ -19,3 +19,14 @@ dataframe of RF detectability scores with peptide sequences.
 \description{
 Predicts detectability scores for given peptide(s) using provided RF model.
 }
+\examples{
+\dontrun{
+peptide_predictions(peptides = c("PEPTIDERANGER", "LLYQPILR", "DAASLFGNK"),
+                    prediction_model = RFmodel_ProteomicsDB)
+
+peptide_predictions(peptides = "MLAILKAQILLR",
+                    prediction_model = RFmodel_CPTAC,
+                    missed_cleavages = 2)
+}
+
+}

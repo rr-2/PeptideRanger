@@ -4,7 +4,20 @@
 #' @param reference_name Name of reference (same as column names)
 #' @param total_trainingSet If TRUE, model will be trained on all peptides in a custom input peptidome. If FALSE, peptides will be selected from whole input peptidome to create a training set of 10k peptides (same method as models provided in package).
 #' @return RF model for predicting peptide detectability
-#' @import randomForest
+#' @importFrom randomForest randomForest
+#' @importFrom stats quantile
+#' @examples
+#' \dontrun{
+#' CPTAC_peptidome <- peptides_inReference(peptidome = SwissProt2018_peptidome,
+#'                                         reference_name = "CPTAC",
+#'                                         pep_reference = CPTAC_exp_counts,
+#'                                         exp_counts_col = "n_obs_pep",
+#'                                         detection_ratio = TRUE)
+#'
+#' train_RFmodel(peptidome = CPTAC_peptidome,
+#'               reference_name = "CPTAC")
+#'}
+#'
 #' @export
 
 
@@ -41,7 +54,7 @@ train_RFmodel <- function(peptidome, reference_name, total_trainingSet){
 
     detected_peptides <- training_peptides[training_peptides[[ratio_name]] >= quantile(training_peptides[[ratio_name]], prob = 0.9),]
     # filter peptides reaching 0.9 quantile of reference ratio values (peptides with good detectability)
-    detected_peptides <- sample_n(detected_peptides, 5000)
+    detected_peptides <- dplyr::sample_n(detected_peptides, 5000)
     # randomly sample 5k peptides from pool of peptides with good detectability
 
     undetected_peptides <- training_peptides[training_peptides[[ratio_name]] == 0,]

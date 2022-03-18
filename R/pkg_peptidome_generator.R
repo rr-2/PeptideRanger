@@ -5,6 +5,14 @@
 #' @param synth_peps If TRUE, filters out peptides that are problematic for peptide synthesis. Currnetly includes peptides with: N-term Q/E residues and C-term P residues
 #' @param aa_range range of peptide size by amino acid count included
 #' @return Peptidome of unique peptides with parent protein uniprot IDs, sequence locations in parent proteins, and n missed cleavages
+#' @examples
+#' \dontrun{
+#' create_peptidome(proteome_dir = "./proteome.fasta",
+#'                  missed_cleavages = c(0,2),
+#'                  synth_peps = FALSE,
+#'                  aa_range = c(7-25))
+#'}
+#'
 #' @export
 
 
@@ -17,6 +25,9 @@ create_peptidome <- function(proteome_dir, missed_cleavages, synth_peps, aa_rang
 
 
   # ----- Defaults -----
+
+  size <- symbol <- uniprot <- start <- end <- NULL
+
 
   if(missing(missed_cleavages)){
 

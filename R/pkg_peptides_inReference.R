@@ -6,8 +6,25 @@
 #' @param exp_counts_col the name of the reference column containing the n of peptide observations
 #' @param detection_freq If TRUE, calculates the each peptide's frequency of appearance in the reference
 #' @param detection_ratio If TRUE, calculates ratio of peptide observations to parent protein observations
-#' @return Dataframe of peptidome with reference information
-#' @import dplyr
+#' @return dataframe of peptidome with reference information
+#' @importFrom dplyr left_join summarise group_by %>%
+#'
+#' @examples
+#' \dontrun{
+#'
+#' peptides_inReference(peptidome = SwissProt2018_peptidome,
+#'                      pep_reference = tm_peptides,
+#'                      reference_name = "transmembrane")
+#'
+#' peptides_inReference(peptidome = SwissProt2018_peptidome,
+#'                      pep_reference = CPTAC_exp_counts,
+#'                      reference_name = "CPTAC",
+#'                      exp_counts_col = "n_obs_pep",
+#'                      detection_freq = TRUE,
+#'                      detection_ratio = TRUE)
+#'}
+#'
+#'
 #' @export
 
 
@@ -18,6 +35,8 @@ peptides_inReference <- function(peptidome, pep_reference, reference_name, exp_c
   # exp_counts_col: name of n_obs_pep column
   # detection_freq: If TRUE, adds column of num experiments peptide was observed in divided by total num of experiments in reference
   # detection_ratio: If TRUE adds column of num experiments peptide was observed in divded by num experiments parent protein was observed in (also adds n_obs_prot column)
+
+  uniprot <- NULL
 
 
   # ----- Defaults -----
