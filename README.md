@@ -15,7 +15,9 @@ The `PeptideRanger` package contains a random forest (RF) classifier that predic
 
 <br>
 
+If you find this package helpful, please cite: https://pubs.acs.org/doi/10.1021/acs.jproteome.2c00538
 
+<br>
 
 
 ### Overview of Package Functions 
